@@ -2,17 +2,12 @@ pipeline {
 
     agent any
 
-    environment {
-        IMAGE_NAME = "mydocker3692/spring-petclinic"
-        IMAGE_TAG = "latest"
-    }
-
     stages {
 
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/yesk993-ops/spring-petclinic.git'     
+                    url: 'https://github.com/yesk993-ops/spring-petclinic.git'
             }
         }
 
@@ -25,24 +20,24 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Image via Docker Compose') {
             steps {
                 sh '''
-                docker build -t $IMAGE_NAME:$IMAGE_TAG .
+                docker compose build
                 '''
             }
         }
 
-        stage('Docker Run (Local Test)') {
+        stage('Run Containers (Local Test) {
             steps {
                 sh '''
-                docker rm -f petclinic || true
-                docker run -d -p 8080:8080 --name petclinic $IMAGE_NAME:$IMAGE_TAG
+                docker compose down || true
+                docker compose up -d
                 '''
             }
         }
 
-        stage('Deploy Kubernetes') {
+        stage('Deploy to Kubernetes') {
             steps {
                 sh '''
                 kubectl apply -f k8s/
