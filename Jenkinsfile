@@ -28,7 +28,7 @@ pipeline {
             }
         }
 
-        stage('Run Containers (Local Test) {
+        stage('Run Containers (Local Test)') {   // ✅ FIXED HERE
             steps {
                 sh '''
                 docker compose down || true
